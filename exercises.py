@@ -23,6 +23,16 @@ class Game():
         
     def play_game(self):
         print('Welcome to a python tic-tac-toe game.')
+        self.render_board()
+        while not self.winner:
+            self.render_msg()
+            self.handle_user_input()
+            self.render_board()
+            self.check_winner()
+            self.check_tie()
+            if not self.winner and not self.tie:
+                self.switch_turn()
+        self.render_msg()
 
     def render_board(self):
         b = self.board
@@ -48,20 +58,35 @@ class Game():
         while True:
 
             user_move = input('Enter your move (valid: example A1 or C3): ').lower()
-            if user_move in self.board:
+            if user_move in self.board and self.board[user_move] is None:
                 self.board[user_move] = self.turn
                 break
             else:
                 print('Invalid input. Please try again.')
-                continue
-            
-    # def check_winner(self):
-    # check the board for winning conditions (8)
+    
+    def check_winner(self):
+    # check the board for winning conditions (8) - I have to check by row/column and diagonal
     # a loop to check winning conditions
     # if there is a winner, update the current player turn to reflect the winner
-
-    # def check_tie(self):
+        win_combos = [
+            ['a1', 'b1', 'c1'],
+            ['a2', 'b2', 'c2'],
+            ['a3', 'b3', 'c3'],
+            ['a1', 'a2', 'a3'],
+            ['b1', 'b2', 'b3'],
+            ['c1', 'c2', 'c3'],
+            ['a1', 'b2', 'c3'],
+            ['c1', 'b2', 'a3'],
+        ]
+        for combo in win_combos:
+            if self.board[combo[0]] == self.board[combo[1]] == self.board[combo[2]] and self.board[combo[0]] is not None:
+                self.winner = self.turn
+    
+                break
+    def check_tie(self):
     # if all spaces in the board are filled with no positions marked as None and there is no winner, then tie = true
+        if all(value is not None for value in self.board.values()) and not self.winner:
+            self.tie = True
 
     def switch_turn(self):
     # at the end of every turn, alternate between x and o
@@ -84,7 +109,3 @@ class Game():
 
 game1 = Game()
 game1.play_game()
-game1.render_board()
-game1.render_msg()
-game1.handle_user_input()
-game1.render_board()
